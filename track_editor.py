@@ -198,7 +198,7 @@ class TrackEditor:
                 self.canvas.create_oval(x - 2, y - 2, x + 2, y + 2, fill=curve.color)
 
     def save_track(self):
-        # Save the inner and outer curves to a file or use them in your game
+        # Save the inner and outer curves to a file
         with open("track.txt", "w") as file:
             file.write("Inner Curve:\n")
             for point in self.inner_curve:
