@@ -88,6 +88,10 @@ class Circle:
         return Vector2f(self.r * math.cos(theta), self.r * math.sin(theta))
     
     def angle_at_pt(self, pt: Vector2f) -> float:
+        """
+        Returns the angle theta for which
+        pt lies on the circle
+        """
         delta = pt - self.cent
         theta = math.atan2(delta.y, delta.x)
 
@@ -115,7 +119,7 @@ class Circle:
         denom = ((a-s) ** 2 - self.r **2)
 
         # standard form of tangent line
-        line = StandardLine(-num, denom, -num*a + denom*b)
+        line = StandardLine().standard_line_from_pt_slope(pt, num, denom)
 
         # need distance from (a, b) to tangent pt
         hyp = pt.eucl_dist(self.cent)
@@ -147,6 +151,16 @@ class StandardLine:
     
     def slope(self):
         return float('inf') if self.b == 0 else -self.a / self.b
+    
+    def standard_line_from_pt_slope(self, pt: Vector2f, num: float, denom: float) -> "StandardLine":
+        """
+        Given a line of the form
+        y-pt.y = num/denom(x-pt.x), converts
+        to a line of the form
+        Ax + By = C
+        returns a line object
+        """
+        return StandardLine(-num, denom, -num*pt.x + denom*pt.y)
     
     def pts_dist_from_pt(self, pt: Vector2f, dist: float = 0) -> Matrix22f:
         """
