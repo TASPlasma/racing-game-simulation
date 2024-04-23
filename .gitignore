@@ -1,3 +1,7 @@
+*.pyc
+myenv/
+__pycache__/
+.env
 right_drift_data_0.txt
 right_drift_data_1.txt
 right_drift_data_2.txt
@@ -19,3 +23,8 @@ __pycache__/math_types.cpython-310.pyc
 __pycache__/simulate.cpython-310.pyc
 raycast.py
 tighter_turns.txt
+goals.txt
+data.json
+data1.json
+.vscode/
+.vscode/settings.json
