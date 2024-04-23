@@ -23,6 +23,10 @@ class Vector2f:
     def __rmul__(self, scalar: float) -> "Vector2f":
         return self * scalar
     
+    def __str__(self):
+        return f'({self.x}, {self.y})'
+
+    
     def dot(self, rhs: "Vector2f") -> float:
         return self.x * rhs.x + self.y * rhs.y
     
@@ -175,10 +179,3 @@ class StandardLine:
         delta = Vector2f(delta_x, self.slope * delta_x)
 
         return Matrix22f(pt.x + delta.x, pt.x-delta.x, pt.y + delta.y, pt.y-delta.y)
-
-pos = Vector2f(5, 5)
-vel = Vector2f(2, 2)
-
-my_mat = Matrix22f().rot_mat(0.52)
-pos = Vector2f(1, 0)
-print(f"Rotate: {pos.mat_mul(my_mat)}, scalar times vector: {5.0 * pos}")

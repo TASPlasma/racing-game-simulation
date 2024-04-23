@@ -159,26 +159,26 @@ def random_point_on_line_seg(pos1: Vector2f, pos2: Vector2f) -> Vector2f:
 class Trajectory:
     """
     inputs: an array of categorical control stick values (i.e. integers from -7 to 7 inclusive)
-    x0: initial horizontal position value
-    y0: initial vertical position value
-    v_x0: initial horizontal velocity component
-    v_y0: initial vertical velocity component
+    pos: x0, y0 starting position
+    vel: vx0, vy0 initial velocity
     dir: direction that the drift is initialized at
     Given an input list, computes the resultant trajectory
     """
-    def __init__(self, pos: Vector2f = Vector2f(118, 180), vel: Vector2f = Vector2f(0, -5), dir='right'):
-        self.pos = pos
-        self.vel = vel
+    def __init__(self, pos: Vector2f = Vector2f(118, 180), vel: Vector2f = Vector2f(84, 0), dir='right'):
+        self.init_pos = pos
+        self.cur_pos = pos
+        self.init_vel = vel
+        self.cur_vel = vel
         self.dir = dir
 
-    def update_vel(self, i):
+    def update_vel(self, i) -> None:
         """
         Computes the new velocity vector/scaled direction vector
         given the input value i
         """
         assert (self.dir in ['left', 'neutral', 'right'])
         if self.dir == 'neutral':
-            return self.vel
+            return self.cur_vel
         
         angle_dict = {
             -7: 0.003,
@@ -198,30 +198,35 @@ class Trajectory:
             7: 0.017
         }
         theta = angle_dict[i] if (self.dir == 'right') else -1 * angle_dict[-1*i]
-        theta *= 5
+        # theta *= 5
         rotate_mat = Matrix22f().rot_mat(theta)
-        vel  = self.vel.mat_mul(rotate_mat)
-        return vel
+        vel  = self.cur_vel.mat_mul(rotate_mat)
+        self.cur_vel = vel
 
-    def update_pos(self, i):
+    def update_pos(self, i) -> None:
         """
         i: drift value, an integer between -7 and 7
         """
-        v = self.update_vel(i)
-        new_pos = self.pos + v
+        self.update_vel(i) # change cur_vel to new one
+        new_pos = self.cur_pos + self.cur_vel
 
-        return new_pos
+        self.cur_pos = new_pos
 
     def compute_trajectory(self, inputs):
         """
         Returns array of positions visited by the character via
         the state and inputs
+
+        To be fixed: bruh this function does not do that at all
+        N
         """
-        cur_pos = self.pos
-        cur_vel = self.vel
-        pos_array = [Vector2f(cur_x, cur_y)]
+        pos_array = [self.init_pos]
         for input in inputs:
-            cur_x, cur_y = self.update_pos(input)
-            cur_v_x0, cur_v_y0 = self.update_vel(input)
-            pos_array += [Vector2f(cur_x, cur_y)]
+            self.update_pos(input) # this updates cur_vel as well
+            pos_array += [self.cur_pos]
         return pos_array
+    
+# inputs = [3, 3, 4, 5, 4, 6, 3, 7]
+# trajectory = Trajectory()
+# positions = trajectory.compute_trajectory(inputs)
+# print(f'Inputs: {inputs}, trajectory: {positions}')
